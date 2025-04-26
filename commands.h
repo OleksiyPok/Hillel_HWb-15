@@ -116,3 +116,35 @@ public:
     std::cout << "Result: " << result << std::endl;
   };
 };
+
+class MultCommand : public Command {
+public:
+  MultCommand() = default;
+  virtual ~MultCommand() = default;
+
+  void execute(const string &user_input = "") override {
+    std::cout << ":Mult Command:" << std::endl;
+
+    std::stringstream ss(user_input);
+    std::string tempStr;
+
+    int result = 1;
+    int count = 0;
+
+    while (ss >> tempStr) {
+      count++;
+      if (!isNumber(tempStr)) {
+        std::cout << "ERROR: '" << tempStr << "' not a number!" << std::endl;
+        return;
+      }
+      result *= std::stoi(tempStr);
+    }
+
+    if (count != 2) {
+      std::cout << "ERROR: function \'Add\' expects exactly two arguments!" << std::endl;
+      return;
+    }
+
+    std::cout << "Result: " << result << std::endl;
+  };
+};
