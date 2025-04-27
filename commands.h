@@ -1,11 +1,10 @@
 #pragma once
 
-#include <chrono>
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
-
 #include "utils.h"
+#include <chrono>
+#include <iostream>
+#include <string>
+#include <vector>
 
 using string = std::string;
 
@@ -18,9 +17,6 @@ public:
 };
 
 class EchoCommand : public Command {
-private:
-  std::string input_string;
-
 public:
   EchoCommand() = default;
   virtual ~EchoCommand() = default;
@@ -93,28 +89,47 @@ public:
   void execute(const string &user_input = "") override {
     std::cout << ":Add Command:" << std::endl;
 
-    std::stringstream ss(user_input);
-    std::string tempStr;
+    std::vector<std::string> argums = splitString(std::move(user_input));
 
-    int result = 0;
-    int count = 0;
-
-    while (ss >> tempStr) {
-      count++;
-      if (!isNumber(tempStr)) {
-        std::cout << "ERROR: '" << tempStr << "' not a number!" << std::endl;
-        return;
-      }
-      result += std::stoi(tempStr);
-    }
-
-    if (count != 2) {
-      std::cout << "ERROR: function \'Add\' expects exactly two arguments!" << std::endl;
+    if (argums.size() != 2) {
+      std::cout << "ERROR: function \'Add\' expects exactly two positive arguments!" << std::endl;
       return;
     }
 
+    long long result = 0;
+
+    for (const auto &argum : argums) {
+      try {
+        if (!isNumber(argum)) {
+          throw std::invalid_argument("'" + argum + "' not a number!");
+        }
+
+        long long number = std::stoll(argum);
+
+        if (number > std::numeric_limits<long long>::max() - result) {
+          throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+        }
+
+        result += number;
+
+      } catch (const std::invalid_argument &e) {
+        std::cerr << "ERROR!: " << e.what() << std::endl;
+        return;
+      } catch (const std::out_of_range &e) {
+        std::cerr << "ERROR!: Overflow value " + argum + ".\n(max: 9223372036854775807)"
+                  << std::endl;
+        return;
+      } catch (const std::overflow_error &e) {
+        std::cout << "ERROR!: " << e.what() << std::endl;
+        return;
+      } catch (...) {
+        std::cerr << "ERROR!: Undefined error!" << std::endl;
+        return;
+      }
+    }
+
     std::cout << "Result: " << result << std::endl;
-  };
+  }
 };
 
 class MultCommand : public Command {
@@ -125,24 +140,43 @@ public:
   void execute(const string &user_input = "") override {
     std::cout << ":Mult Command:" << std::endl;
 
-    std::stringstream ss(user_input);
-    std::string tempStr;
+    std::vector<std::string> argums = splitString(std::move(user_input));
 
-    int result = 1;
-    int count = 0;
-
-    while (ss >> tempStr) {
-      count++;
-      if (!isNumber(tempStr)) {
-        std::cout << "ERROR: '" << tempStr << "' not a number!" << std::endl;
-        return;
-      }
-      result *= std::stoi(tempStr);
+    if (argums.size() != 2) {
+      std::cout << "ERROR: function \'Mult\' expects exactly two positive arguments!" << std::endl;
+      return;
     }
 
-    if (count != 2) {
-      std::cout << "ERROR: function \'Add\' expects exactly two arguments!" << std::endl;
-      return;
+    long long result = 1;
+
+    for (const auto &argum : argums) {
+      try {
+        if (!isNumber(argum)) {
+          throw std::invalid_argument("'" + argum + "' not a number!");
+        }
+
+        long long number = std::stoll(argum);
+
+        if (number > std::numeric_limits<long long>::max() / result) {
+          throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+        }
+
+        result *= number;
+
+      } catch (const std::invalid_argument &e) {
+        std::cerr << "ERROR!: " << e.what() << std::endl;
+        return;
+      } catch (const std::out_of_range &e) {
+        std::cerr << "ERROR!: Overflow value " + argum + ".\n(max: 9223372036854775807)"
+                  << std::endl;
+        return;
+      } catch (const std::overflow_error &e) {
+        std::cout << "ERROR!: " << e.what() << std::endl;
+        return;
+      } catch (...) {
+        std::cerr << "ERROR!: Undefined error!" << std::endl;
+        return;
+      }
     }
 
     std::cout << "Result: " << result << std::endl;
