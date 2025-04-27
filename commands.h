@@ -16,6 +16,23 @@ public:
   virtual void execute(const string &user_input = "") = 0;
 };
 
+class HelpCommand : public Command {
+public:
+  HelpCommand() = default;
+  virtual ~HelpCommand() = default;
+
+  void execute(const string &user_input = "") override {
+    std::cout << ":Help Command:" << std::endl;
+    std::cout << "Aviable Commands: " << std::endl
+              << "time" << std::endl
+              << "exit" << std::endl
+              << "time" << std::endl
+              << "echo" << std::endl
+              << "add" << std::endl
+              << "mult" << std::endl;
+  }
+};
+
 class EchoCommand : public Command {
 public:
   EchoCommand() = default;

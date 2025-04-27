@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
   commands.emplace("echo", std::make_unique<EchoCommand>());
   commands.emplace("add", std::make_unique<AddCommand>());
   commands.emplace("mult", std::make_unique<MultCommand>());
+  commands.emplace("help", std::make_unique<HelpCommand>());
 
   do {
     std::cout << "==>> ";
