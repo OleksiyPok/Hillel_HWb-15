@@ -17,9 +17,11 @@ int main(int argc, char **argv) {
   commands.emplace("", std::make_unique<EmptyCommand>());
   commands.emplace("time", std::make_unique<TimeCommand>());
   commands.emplace("echo", std::make_unique<EchoCommand>());
-  commands.emplace("add", std::make_unique<AddCommand>());
-  commands.emplace("mult", std::make_unique<MultCommand>());
+  // commands.emplace("add", std::make_unique<AddCommand>());
+  // commands.emplace("mult", std::make_unique<MultCommand>());
   commands.emplace("help", std::make_unique<HelpCommand>());
+  commands.emplace("add", std::make_unique<CalculatorCommand>("add"));
+  commands.emplace("mult", std::make_unique<CalculatorCommand>("mult"));
 
   do {
     std::cout << "==>> ";

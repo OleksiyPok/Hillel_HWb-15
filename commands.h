@@ -98,22 +98,129 @@ public:
   }
 };
 
-class AddCommand : public Command {
+// class AddCommand : public Command {
+// public:
+//   AddCommand() = default;
+//   virtual ~AddCommand() = default;
+
+//   void execute(const string &user_input = "") override {
+//     std::cout << ":Add Command:" << std::endl;
+
+//     std::vector<std::string> argums = splitString(std::move(user_input));
+
+//     if (argums.size() != 2) {
+//       std::cout << "ERROR: function \'Add\' expects exactly two positive arguments!" <<
+//       std::endl; return;
+//     }
+
+//     long long result = 0;
+
+//     for (const auto &argum : argums) {
+//       try {
+//         if (!isNumber(argum)) {
+//           throw std::invalid_argument("'" + argum + "' not a number!");
+//         }
+
+//         long long number = std::stoll(argum);
+
+//         if (number > std::numeric_limits<long long>::max() - result) {
+//           throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+//         }
+
+//         result += number;
+
+//       } catch (const std::invalid_argument &e) {
+//         std::cerr << "ERROR!: " << e.what() << std::endl;
+//         return;
+//       } catch (const std::out_of_range &e) {
+//         std::cerr << "ERROR!: Overflow value " + argum + ".\n(max: 9223372036854775807)"
+//                   << std::endl;
+//         return;
+//       } catch (const std::overflow_error &e) {
+//         std::cerr << "ERROR!: " << e.what() << std::endl;
+//         return;
+//       } catch (...) {
+//         std::cerr << "ERROR!: Undefined error!" << std::endl;
+//         return;
+//       }
+//     }
+
+//     std::cout << "Result: " << result << std::endl;
+//   }
+// };
+
+// class MultCommand : public Command {
+// public:
+//   MultCommand() = default;
+//   virtual ~MultCommand() = default;
+
+//   void execute(const string &user_input = "") override {
+//     std::cout << ":Mult Command:" << std::endl;
+
+//     std::vector<std::string> argums = splitString(std::move(user_input));
+
+//     if (argums.size() != 2) {
+//       std::cout << "ERROR: function \'Mult\' expects exactly two positive arguments!" <<
+//       std::endl; return;
+//     }
+
+//     long long result = 1;
+
+//     for (const auto &argum : argums) {
+//       try {
+//         if (!isNumber(argum)) {
+//           throw std::invalid_argument("'" + argum + "' not a number!");
+//         }
+
+//         long long number = std::stoll(argum);
+
+//         if (number > std::numeric_limits<long long>::max() / result) {
+//           throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+//         }
+
+//         result *= number;
+
+//       } catch (const std::invalid_argument &e) {
+//         std::cerr << "ERROR!: " << e.what() << std::endl;
+//         return;
+//       } catch (const std::out_of_range &e) {
+//         std::cerr << "ERROR!: Overflow value " + argum + ".\n(max: 9223372036854775807)"
+//                   << std::endl;
+//         return;
+//       } catch (const std::overflow_error &e) {
+//         std::cerr << "ERROR!: " << e.what() << std::endl;
+//         return;
+//       } catch (...) {
+//         std::cerr << "ERROR!: Undefined error!" << std::endl;
+//         return;
+//       }
+//     }
+
+//     std::cout << "Result: " << result << std::endl;
+//   };
+// };
+
+class CalculatorCommand : public Command {
+private:
+  std::string op;
+
 public:
-  AddCommand() = default;
-  virtual ~AddCommand() = default;
+  CalculatorCommand(std::string op) : op(op) {};
+  virtual ~CalculatorCommand() = default;
 
   void execute(const string &user_input = "") override {
+    std::string command_name = ((op == "add") ? "Add" : "Mult");
     std::cout << ":Add Command:" << std::endl;
 
     std::vector<std::string> argums = splitString(std::move(user_input));
 
     if (argums.size() != 2) {
-      std::cout << "ERROR: function \'Add\' expects exactly two positive arguments!" << std::endl;
+      std::cout << "ERROR: function '" + op + "' expects exactly two positive arguments!"
+                << std::endl;
       return;
     }
 
-    long long result = 0;
+    long long result = ((op == "add") ? 0 : 1);
 
     for (const auto &argum : argums) {
       try {
@@ -123,11 +230,17 @@ public:
 
         long long number = std::stoll(argum);
 
-        if (number > std::numeric_limits<long long>::max() - result) {
-          throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+        if (op == "add") {
+          if (number > std::numeric_limits<long long>::max() - result) {
+            throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+          }
+        } else if (op == "mult") {
+          if (number > std::numeric_limits<long long>::max() / result) {
+            throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
+          }
         }
 
-        result += number;
+        result = ((op == "add") ? (number + result) : (number * result));
 
       } catch (const std::invalid_argument &e) {
         std::cerr << "ERROR!: " << e.what() << std::endl;
@@ -147,55 +260,4 @@ public:
 
     std::cout << "Result: " << result << std::endl;
   }
-};
-
-class MultCommand : public Command {
-public:
-  MultCommand() = default;
-  virtual ~MultCommand() = default;
-
-  void execute(const string &user_input = "") override {
-    std::cout << ":Mult Command:" << std::endl;
-
-    std::vector<std::string> argums = splitString(std::move(user_input));
-
-    if (argums.size() != 2) {
-      std::cout << "ERROR: function \'Mult\' expects exactly two positive arguments!" << std::endl;
-      return;
-    }
-
-    long long result = 1;
-
-    for (const auto &argum : argums) {
-      try {
-        if (!isNumber(argum)) {
-          throw std::invalid_argument("'" + argum + "' not a number!");
-        }
-
-        long long number = std::stoll(argum);
-
-        if (number > std::numeric_limits<long long>::max() / result) {
-          throw std::overflow_error("Overflow during operation. \n(max: 9223372036854775807)");
-        }
-
-        result *= number;
-
-      } catch (const std::invalid_argument &e) {
-        std::cerr << "ERROR!: " << e.what() << std::endl;
-        return;
-      } catch (const std::out_of_range &e) {
-        std::cerr << "ERROR!: Overflow value " + argum + ".\n(max: 9223372036854775807)"
-                  << std::endl;
-        return;
-      } catch (const std::overflow_error &e) {
-        std::cout << "ERROR!: " << e.what() << std::endl;
-        return;
-      } catch (...) {
-        std::cerr << "ERROR!: Undefined error!" << std::endl;
-        return;
-      }
-    }
-
-    std::cout << "Result: " << result << std::endl;
-  };
 };
